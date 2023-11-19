@@ -40,8 +40,8 @@ slug-8b1fb051 = remove the lifetime annotation
 slug-7364cc3d = annotated with lifetime here
 slug-00cb5ad1 = field expressions cannot have generic arguments
 slug-1a111f00 = macros cannot use qualified paths
-slug-74b94e80 = expected `while`, `for`, `loop` or `{` after a label
-slug-74b94e80 = expected `while`, `for`, `loop` or `{` after a label
+slug-77bc9d75 = expected `while`, `for`, `loop` or `{"{"}` after a label
+slug-77bc9d75 = expected `while`, `for`, `loop` or `{"{"}` after a label
 slug-54fee760 = consider removing the label
 slug-11a96436 = consider enclosing expression in a block
 slug-907215d4 = labeled expression must be followed by `:`
@@ -77,7 +77,7 @@ slug-c04af9be = expected `{"{"}`, found {$first_tok}
 slug-9ab30c2d = expected an `if` or a block after this `else`
 slug-9a4015e3 = add an `if` if this is the condition of a chained `else if` statement
 slug-249aaa89 = expected one of `,`, `:`, or `{"}"}`, found `{$token}`
-slug-d4727355 = expected one of `,`, `:`, or `}`
+slug-c222abbd = expected one of `,`, `:`, or `{"}"}`
 slug-834b0547 = while parsing this struct field
 slug-e1da4710 = outer attributes are not allowed on `if` and `else` branches
 slug-1c74cc3b = the attributes are attached to this branch
@@ -96,7 +96,7 @@ slug-a57886ae = missing a comma here to end this `match` arm
 slug-147db57c = keyword `catch` cannot follow a `try` block
 slug-fef7e0b0 = try using `match` on the result of the `try` block instead
 slug-09259d54 = `gen` functions are not yet implemented
-slug-5e47de18 = for now you can use `gen {}` blocks and return `impl Iterator` instead
+slug-5942ccc1 = for now you can use `gen {"{}"}` blocks and return `impl Iterator` instead
 slug-28d7e8b7 = cannot use a comma after the base struct
 slug-c794ece9 = the base struct must always be the last field
 slug-7a1119bf = remove this comma
@@ -111,8 +111,8 @@ slug-a319e152 = expected pattern, found `let`
 slug-e00aee7c = remove the unnecessary `let` keyword
 slug-96077d88 = unexpected `==`
 slug-81e696ec = try using `=` instead
-slug-255bd7fa = expected `{}`, found `;`
-slug-b786f920 = try using `{}` instead
+slug-d134e5fe = expected { "`{}`" }, found `;`
+slug-06b5e805 = try using { "`{}`" } instead
 slug-09edf1f2 = `<` is interpreted as a start of generic arguments for `{$type}`, not a comparison
 slug-9fe786ef = not interpreted as comparison
 slug-f1c0e745 = interpreted as generic arguments
@@ -172,7 +172,7 @@ slug-696b6f72 = some possible visibility restrictions are:
                 `pub(super)`: visible only in the current module's parent
                 `pub(in path::to::module)`: visible only on the specified path
 slug-a134fda8 = make this visible only to module `{$inner_str}` with `in`
-slug-1baf3040 = <assignment> ... else { ... } is not allowed
+slug-7f956a61 = <assignment> ... else {"{"} ... {"}"} is not allowed
 slug-d92539cc = expected statement after outer attribute
 slug-078c065c = found a documentation comment that doesn't document anything
 slug-5ffddafd = doc comments must come before what they document, if a comment was intended use `//`
@@ -180,7 +180,7 @@ slug-f2ec0687 = missing comma here
 slug-37e13ebd = `const` and `let` are mutually exclusive
 slug-13662144 = remove `let`
 slug-9a394870 = a `{$operator}` expression cannot be directly assigned in `let...else`
-slug-606f00bf = right curly brace `}` before `else` in a `let...else` statement not allowed
+slug-7e1fb406 = right curly brace `{"}"}` before `else` in a `let...else` statement not allowed
 slug-abb0c6ca = can't reassign to an uninitialized variable
 slug-541941ed = if you meant to overwrite, remove the `let` binding
 slug-a72f6de4 = initialize the variable
@@ -276,7 +276,7 @@ slug-7ecdfece = cannot pass `self` by raw pointer
 slug-7ecdfece = cannot pass `self` by raw pointer
 slug-61a404cf = unexpected token: `{$actual}`
 slug-aec47d63 = visibility `{$vis}` is not followed by an item
-slug-444c3353 = you likely meant to define an item, e.g., `{$vis} fn foo() {\"{}\"}`
+slug-302220ac = you likely meant to define an item, e.g., `{$vis} fn foo() {"{}"}`
 slug-4091c14d = the visibility
 slug-f602cffa = `default` is not followed by an item
 slug-5c8f4d31 = only `fn`, `const`, `type`, or `impl` items may be prefixed by `default`
@@ -400,7 +400,7 @@ slug-94778180 = invalid start of unicode escape
 slug-af1ebb91 = overlong unicode escape
 slug-d41e4fad = must have at most 6 hex digits
 slug-a8a547ae = unterminated unicode escape
-slug-6f2b396a = missing a closing `}`
+slug-174547ed = missing a closing `{"}"}`
 slug-08529d25 = terminate the unicode escape
 slug-89874cc7 = incorrect unicode escape sequence
 slug-89874cc7 = incorrect unicode escape sequence
@@ -430,7 +430,7 @@ slug-0d38d6b3 = this `{$chr}` is followed by the combining {$len ->
                 } `{$escaped_marks}`
 slug-4b33d371 = there are non-printing characters, the full sequence is `{$escaped}`
 slug-838f40dc = format of unicode escape sequences uses braces
-slug-a27d1119 = format of unicode escape sequences is `\u{...}`
+slug-f932247e = format of unicode escape sequences is `\u{"{...}"}`
 slug-e6995391 = remove the `|`
 slug-ae793e36 = wrap the pattern in parentheses
 slug-7d66a86a = unexpected `||` before function parameter
@@ -493,7 +493,7 @@ slug-b6595dfa = C-variadic type `...` may not be nested inside another type
 slug-444c9031 = invalid `dyn` keyword
 slug-8b309023 = `dyn` is only needed at the start of a trait `+`-separated list
 slug-77622dcc = remove this keyword
-slug-2b7eda3a = set `edition = \"{$edition}\"` in `Cargo.toml`
+slug-2e604116 = set `edition = "{$edition}"` in `Cargo.toml`
 slug-63c997ec = for more on editions, read https://doc.rust-lang.org/edition-guide
 slug-6230a652 = pass `--edition {$edition}` to `rustc`
 slug-63c997ec = for more on editions, read https://doc.rust-lang.org/edition-guide
@@ -551,7 +551,7 @@ slug-fd9dad4f = remove the visibility
 slug-e7db9072 = `{$kw_str}` definition cannot be nested inside `{$keyword}`
 slug-ce385d1f = consider creating a new `{$kw_str}` definition instead of nesting
 slug-270c595c = function body cannot be `= expression;`
-slug-b493ef58 = surround the expression with `{` and `}` instead of `=` and `;`
+slug-59325a6d = surround the expression with `{"{"}` and `{"}"}` instead of `=` and `;`
 slug-313f9920 = expected pattern, found {$descr}
 slug-6966886d = `box` is a reserved keyword
 slug-74da5b13 = escape `box` to use it as an identifier

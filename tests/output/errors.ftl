@@ -40,8 +40,8 @@ remove the lifetime annotation
 annotated with lifetime here
 field expressions cannot have generic arguments
 macros cannot use qualified paths
-expected `while`, `for`, `loop` or `{` after a label
-expected `while`, `for`, `loop` or `{` after a label
+expected `while`, `for`, `loop` or `{"{"}` after a label
+expected `while`, `for`, `loop` or `{"{"}` after a label
 consider removing the label
 consider enclosing expression in a block
 labeled expression must be followed by `:`
@@ -77,7 +77,7 @@ expected `{"{"}`, found {$first_tok}
 expected an `if` or a block after this `else`
 add an `if` if this is the condition of a chained `else if` statement
 expected one of `,`, `:`, or `{"}"}`, found `{$token}`
-expected one of `,`, `:`, or `}`
+expected one of `,`, `:`, or `{"}"}`
 while parsing this struct field
 outer attributes are not allowed on `if` and `else` branches
 the attributes are attached to this branch
@@ -96,7 +96,7 @@ missing a comma here to end this `match` arm
 keyword `catch` cannot follow a `try` block
 try using `match` on the result of the `try` block instead
 `gen` functions are not yet implemented
-for now you can use `gen {}` blocks and return `impl Iterator` instead
+for now you can use `gen {"{}"}` blocks and return `impl Iterator` instead
 cannot use a comma after the base struct
 the base struct must always be the last field
 remove this comma
@@ -111,8 +111,8 @@ expected pattern, found `let`
 remove the unnecessary `let` keyword
 unexpected `==`
 try using `=` instead
-expected `{}`, found `;`
-try using `{}` instead
+expected { "`{}`" }, found `;`
+try using { "`{}`" } instead
 `<` is interpreted as a start of generic arguments for `{$type}`, not a comparison
 not interpreted as comparison
 interpreted as generic arguments
@@ -172,7 +172,7 @@ some possible visibility restrictions are:
 `pub(super)`: visible only in the current module's parent
 `pub(in path::to::module)`: visible only on the specified path
 make this visible only to module `{$inner_str}` with `in`
-<assignment> ... else { ... } is not allowed
+<assignment> ... else {"{"} ... {"}"} is not allowed
 expected statement after outer attribute
 found a documentation comment that doesn't document anything
 doc comments must come before what they document, if a comment was intended use `//`
@@ -180,7 +180,7 @@ missing comma here
 `const` and `let` are mutually exclusive
 remove `let`
 a `{$operator}` expression cannot be directly assigned in `let...else`
-right curly brace `}` before `else` in a `let...else` statement not allowed
+right curly brace `{"}"}` before `else` in a `let...else` statement not allowed
 can't reassign to an uninitialized variable
 if you meant to overwrite, remove the `let` binding
 initialize the variable
@@ -276,7 +276,7 @@ cannot pass `self` by raw pointer
 cannot pass `self` by raw pointer
 unexpected token: `{$actual}`
 visibility `{$vis}` is not followed by an item
-you likely meant to define an item, e.g., `{$vis} fn foo() {\"{}\"}`
+you likely meant to define an item, e.g., `{$vis} fn foo() {"{}"}`
 the visibility
 `default` is not followed by an item
 only `fn`, `const`, `type`, or `impl` items may be prefixed by `default`
@@ -400,7 +400,7 @@ invalid start of unicode escape
 overlong unicode escape
 must have at most 6 hex digits
 unterminated unicode escape
-missing a closing `}`
+missing a closing `{"}"}`
 terminate the unicode escape
 incorrect unicode escape sequence
 incorrect unicode escape sequence
@@ -430,7 +430,7 @@ this `{$chr}` is followed by the combining {$len ->
 } `{$escaped_marks}`
 there are non-printing characters, the full sequence is `{$escaped}`
 format of unicode escape sequences uses braces
-format of unicode escape sequences is `\u{...}`
+format of unicode escape sequences is `\u{"{...}"}`
 remove the `|`
 wrap the pattern in parentheses
 unexpected `||` before function parameter
@@ -493,7 +493,7 @@ C-variadic type `...` may not be nested inside another type
 invalid `dyn` keyword
 `dyn` is only needed at the start of a trait `+`-separated list
 remove this keyword
-set `edition = \"{$edition}\"` in `Cargo.toml`
+set `edition = "{$edition}"` in `Cargo.toml`
 for more on editions, read https://doc.rust-lang.org/edition-guide
 pass `--edition {$edition}` to `rustc`
 for more on editions, read https://doc.rust-lang.org/edition-guide
@@ -551,7 +551,7 @@ remove the visibility
 `{$kw_str}` definition cannot be nested inside `{$keyword}`
 consider creating a new `{$kw_str}` definition instead of nesting
 function body cannot be `= expression;`
-surround the expression with `{` and `}` instead of `=` and `;`
+surround the expression with `{"{"}` and `{"}"}` instead of `=` and `;`
 expected pattern, found {$descr}
 `box` is a reserved keyword
 escape `box` to use it as an identifier

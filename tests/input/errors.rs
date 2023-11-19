@@ -1,17 +1,16 @@
 // ignore-tidy-filelength
 use std::borrow::Cow;
 
+use crate::parser::{ForbiddenLetReason, TokenDescription};
 use rustc_ast::token::Token;
 use rustc_ast::{Path, Visibility};
-use rustc_errors::DiagnosticMessage;
+use rustc_errors::{fluent_raw, DiagnosticMessage};
 use rustc_errors::{AddToDiagnostic, Applicability, EmissionGuarantee, IntoDiagnostic};
 use rustc_macros::{Diagnostic, Subdiagnostic};
 use rustc_session::errors::ExprParenthesesNeeded;
 use rustc_span::edition::{Edition, LATEST_STABLE_EDITION};
 use rustc_span::symbol::Ident;
 use rustc_span::{Span, Symbol};
-
-use crate::parser::{ForbiddenLetReason, TokenDescription};
 
 #[derive(Diagnostic)]
 #[diag("ambiguous `+` in a type")]
@@ -315,10 +314,10 @@ pub(crate) struct FieldExpressionWithGeneric(#[primary_span] pub Span);
 pub(crate) struct MacroInvocationWithQualifiedPath(#[primary_span] pub Span);
 
 #[derive(Diagnostic)]
-#[diag("expected `while`, `for`, `loop` or `{` after a label")]
+#[diag(r#"expected `while`, `for`, `loop` or `{"{"}` after a label"#)]
 pub(crate) struct UnexpectedTokenAfterLabel {
     #[primary_span]
-    #[label("expected `while`, `for`, `loop` or `{` after a label")]
+    #[label(r#"expected `while`, `for`, `loop` or `{"{"}` after a label"#)]
     pub span: Span,
     #[suggestion(label = "consider removing the label", style = "verbose", code = "")]
     pub remove_label: Option<Span>,
@@ -507,7 +506,7 @@ pub(crate) struct ExpectedEqForLetExpr {
 }
 
 #[derive(Diagnostic)]
-#[diag(label = r#"expected `{"{"}`, found {$first_tok}"#)]
+#[diag(r#"expected `{"{"}`, found {$first_tok}"#)]
 pub(crate) struct ExpectedElseBlock {
     #[primary_span]
     pub first_tok_span: Span,
@@ -523,10 +522,10 @@ pub(crate) struct ExpectedElseBlock {
 }
 
 #[derive(Diagnostic)]
-#[diag(label = r#"expected one of `,`, `:`, or `{"}"}`, found `{$token}`"#)]
+#[diag(r#"expected one of `,`, `:`, or `{"}"}`, found `{$token}`"#)]
 pub(crate) struct ExpectedStructField {
     #[primary_span]
-    #[label("expected one of `,`, `:`, or `}`")]
+    #[label(r#"expected one of `,`, `:`, or `{"}"}`"#)]
     pub span: Span,
     pub token: Token,
     #[label("while parsing this struct field")]
@@ -630,7 +629,7 @@ pub(crate) struct CatchAfterTry {
 
 #[derive(Diagnostic)]
 #[diag("`gen` functions are not yet implemented")]
-#[help("for now you can use `gen {}` blocks and return `impl Iterator` instead")]
+#[help(r#"for now you can use `gen {"{}"}` blocks and return `impl Iterator` instead"#)]
 pub(crate) struct GenFn {
     #[primary_span]
     pub span: Span,
@@ -719,11 +718,11 @@ pub(crate) struct UseEqInstead {
 }
 
 #[derive(Diagnostic)]
-#[diag("expected `{}`, found `;`")]
+#[diag(r#"expected { "`{}`" }, found `;`"#)]
 pub(crate) struct UseEmptyBlockNotSemi {
     #[primary_span]
     #[suggestion(
-        label = "try using `{}` instead",
+        label = r#"try using { "`{}`" } instead"#,
         style = "hidden",
         applicability = "machine-applicable",
         code = "{{}}"
@@ -1058,7 +1057,7 @@ pub(crate) struct IncorrectVisibilityRestriction {
 }
 
 #[derive(Diagnostic)]
-#[diag("<assignment> ... else { ... } is not allowed")]
+#[diag(r#"<assignment> ... else {"{"} ... {"}"} is not allowed"#)]
 pub(crate) struct AssignmentElseNotAllowed {
     #[primary_span]
     pub span: Span,
@@ -1111,7 +1110,7 @@ pub(crate) struct InvalidExpressionInLetElse {
 }
 
 #[derive(Diagnostic)]
-#[diag("right curly brace `}` before `else` in a `let...else` statement not allowed")]
+#[diag(r#"right curly brace `{"}"}` before `else` in a `let...else` statement not allowed"#)]
 pub(crate) struct InvalidCurlyInLetElse {
     #[primary_span]
     pub span: Span,
@@ -1233,18 +1232,22 @@ impl<'a, G: EmissionGuarantee> IntoDiagnostic<'a, G> for ExpectedIdentifier {
 
         let mut diag = handler.struct_diagnostic(match token_descr {
             Some(TokenDescription::ReservedIdentifier) => {
-                "expected identifier, found reserved identifier `{$token}`"
+                fluent_raw!("expected identifier, found reserved identifier `{$token}`")
             }
-            Some(TokenDescription::Keyword) => "expected identifier, found keyword `{$token}`",
+            Some(TokenDescription::Keyword) => {
+                fluent_raw!("expected identifier, found keyword `{$token}`")
+            }
+
             Some(TokenDescription::ReservedKeyword) => {
-                "expected identifier, found reserved keyword `{$token}`"
+                fluent_raw!("expected identifier, found reserved keyword `{$token}`")
             }
 
             Some(TokenDescription::DocComment) => {
-                "expected identifier, found doc comment `{$token}`"
+                fluent_raw!("expected identifier, found doc comment `{$token}`")
             }
-
-            None => "expected identifier, found `{$token}`",
+            None => {
+                fluent_raw!("expected identifier, found `{$token}`")
+            }
         });
         diag.set_span(self.span);
         diag.set_arg("token", self.token);
@@ -1292,14 +1295,18 @@ impl<'a, G: EmissionGuarantee> IntoDiagnostic<'a, G> for ExpectedSemi {
 
         let mut diag = handler.struct_diagnostic(match token_descr {
             Some(TokenDescription::ReservedIdentifier) => {
-                "expected `;`, found reserved identifier `{$token}`"
+                fluent_raw!("expected `;`, found reserved identifier `{$token}`")
             }
-            Some(TokenDescription::Keyword) => "expected `;`, found keyword `{$token}`",
+            Some(TokenDescription::Keyword) => {
+                fluent_raw!("expected `;`, found keyword `{$token}`")
+            }
             Some(TokenDescription::ReservedKeyword) => {
-                "expected `;`, found reserved keyword `{$token}`"
+                fluent_raw!("expected `;`, found reserved keyword `{$token}`")
             }
-            Some(TokenDescription::DocComment) => "expected `;`, found doc comment `{$token}`",
-            None => "expected `;`, found `{$token}`",
+            Some(TokenDescription::DocComment) => {
+                fluent_raw!("expected `;`, found doc comment `{$token}`")
+            }
+            None => fluent_raw!("expected `;`, found `{$token}`"),
         });
         diag.set_span(self.span);
         diag.set_arg("token", self.token);
@@ -1842,7 +1849,7 @@ pub struct UnexpectedTokenAfterDot<'a> {
 
 #[derive(Diagnostic)]
 #[diag("visibility `{$vis}` is not followed by an item")]
-#[help("you likely meant to define an item, e.g., `{$vis} fn foo() {\"{}\"}`")]
+#[help(r#"you likely meant to define an item, e.g., `{$vis} fn foo() {"{}"}`"#)]
 pub(crate) struct VisibilityNotFollowedByItem {
     #[primary_span]
     #[label("the visibility")]
@@ -2096,9 +2103,7 @@ pub(crate) struct EnumStructMutuallyExclusive {
 
 #[derive(Diagnostic)]
 pub(crate) enum UnexpectedTokenAfterStructName {
-    #[diag(
-        label = r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved identifier `{$token}`"#
-    )]
+    #[diag(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved identifier `{$token}`"#)]
     ReservedIdentifier {
         #[primary_span]
         #[label(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name"#)]
@@ -2106,7 +2111,7 @@ pub(crate) enum UnexpectedTokenAfterStructName {
         token: Token,
     },
     #[diag(
-        label = r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found keyword `{$token}`"#
+        r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found keyword `{$token}`"#
     )]
     Keyword {
         #[primary_span]
@@ -2114,9 +2119,7 @@ pub(crate) enum UnexpectedTokenAfterStructName {
         span: Span,
         token: Token,
     },
-    #[diag(
-        label = r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved keyword `{$token}`"#
-    )]
+    #[diag(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved keyword `{$token}`"#)]
     ReservedKeyword {
         #[primary_span]
         #[label(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name"#)]
@@ -2124,7 +2127,7 @@ pub(crate) enum UnexpectedTokenAfterStructName {
         token: Token,
     },
     #[diag(
-        label = r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found doc comment `{$token}`"#
+        r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found doc comment `{$token}`"#
     )]
     DocComment {
         #[primary_span]
@@ -2132,9 +2135,7 @@ pub(crate) enum UnexpectedTokenAfterStructName {
         span: Span,
         token: Token,
     },
-    #[diag(
-        label = r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found `{$token}`"#
-    )]
+    #[diag(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name, found `{$token}`"#)]
     Other {
         #[primary_span]
         #[label(r#"expected `where`, `{"{"}`, `(`, or `;` after struct name"#)]
@@ -2477,7 +2478,7 @@ pub enum UnescapeError {
     #[diag("unterminated unicode escape")]
     UnclosedUnicodeEscape(
         #[primary_span]
-        #[label("missing a closing `}`")]
+        #[label(r#"missing a closing `{"}"}`"#)]
         Span,
         #[suggestion(
             label = "terminate the unicode escape",
@@ -2620,7 +2621,7 @@ pub enum NoBraceUnicodeSub {
         span: Span,
         suggestion: String,
     },
-    #[help(r#"format of unicode escape sequences is `\u{...}`"#)]
+    #[help(r#"format of unicode escape sequences is `\u{"{...}"}`"#)]
     Help,
 }
 
@@ -2793,11 +2794,10 @@ pub(crate) enum InvalidMutInPattern {
         #[primary_span]
         #[suggestion(
             label = "remove the `mut` prefix",
-            code = "{pat}",
+            code = "",
             applicability = "machine-applicable"
         )]
         span: Span,
-        pat: String,
     },
 }
 
@@ -2966,7 +2966,7 @@ pub(crate) struct InvalidDynKeyword {
 
 #[derive(Subdiagnostic)]
 pub enum HelpUseLatestEdition {
-    #[help("set `edition = \"{$edition}\"` in `Cargo.toml`")]
+    #[help(r#"set `edition = "{$edition}"` in `Cargo.toml`"#)]
     #[note("for more on editions, read https://doc.rust-lang.org/edition-guide")]
     Cargo { edition: Edition },
     #[help("pass `--edition {$edition}` to `rustc`")]
@@ -3291,7 +3291,7 @@ pub(crate) struct FunctionBodyEqualsExpr {
 
 #[derive(Subdiagnostic)]
 #[multipart_suggestion(
-    label = "surround the expression with `{` and `}` instead of `=` and `;`",
+    label = r#"surround the expression with `{"{"}` and `{"}"}` instead of `=` and `;`"#,
     applicability = "machine-applicable"
 )]
 pub(crate) struct FunctionBodyEqualsExprSugg {

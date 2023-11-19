@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-mod fluent;
 mod visitor;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -23,9 +22,7 @@ impl FluentGenerator {
                 }
             }
         }
-        //eprintln!("source_dir: {:?}", source_files);
         let filtered_files = Self::filter(&source_files);
-        //eprintln!("filtered_files: {:?}", filtered_files);
 
         Self {
             source_dir,
@@ -58,7 +55,7 @@ impl FluentGenerator {
             }
         }
         eprintln!("memssages: {:?}", memssages.len());
-        fluent::gen_fluent_file(&memssages, "result.ftl");
+        visitor.gen_fluent_file("result.ftl");
     }
 }
 

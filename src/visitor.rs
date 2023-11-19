@@ -1,5 +1,6 @@
 use proc_macro2::TokenTree;
-use std::fs;
+use std::fs::{self, File};
+use std::io::Write;
 use std::path::PathBuf;
 use syn::visit::{self, Visit};
 use syn::{Error as SynError, Meta, MetaList};
@@ -18,6 +19,24 @@ impl SynVisitor {
         let syntax = syn::parse_file(&code)?;
         self.visit_file(&syntax);
         return Ok(self.messages.clone());
+    }
+
+    // output the messages into fluent file format
+    pub fn gen_fluent_file(&self, output_path: &str) {
+        let mut file = File::create(output_path).unwrap();
+        for message in self.messages.iter() {
+            // cacluate the a hash slug for the message
+            let digest = md5::compute(message);
+            let id = format!("{:x}", digest);
+            let slug = format!("slug-{}", id[0..8].to_string());
+
+            // add 16 spaces to the heading of the message for better readability
+            // fluent parser will ignore the heading spaces by common prefix spaces
+            let output = message.replace("\n", format!("\n{}", " ".repeat(16)).as_str());
+            let output = output.trim_end();
+            let message = format!("{} = {}\n", slug, output);
+            file.write_all(message.as_bytes()).unwrap();
+        }
     }
 }
 
@@ -87,18 +106,7 @@ mod tests {
         false
     }
 
-    fn run_spec(input: &str, expected_path: &str, output_path: &str) {
-        let mut visitor = SynVisitor::new();
-        let file_path = PathBuf::from(input);
-        let _ = visitor.visit_syntax(&file_path);
-        let messages = visitor.messages;
-        // write messages to a file output
-        let mut file = File::create(output_path).unwrap();
-        for message in messages.iter() {
-            file.write_all(message.as_bytes()).unwrap();
-            file.write_all(b"\n").unwrap();
-        }
-        // compare the output with expected
+    fn file_check(expected_path: &str, output_path: &str) {
         let expected = fs::read_to_string(expected_path).unwrap_or_default();
         let output = fs::read_to_string(output_path).unwrap();
         if expected != output {
@@ -117,6 +125,21 @@ mod tests {
                 panic!("the result is diff from expected result ...");
             }
         }
+    }
+
+    fn run_spec(input: &str, expected_path: &str, output_path: &str) {
+        let mut visitor = SynVisitor::new();
+        let file_path = PathBuf::from(input);
+        let _ = visitor.visit_syntax(&file_path);
+        let messages = visitor.messages;
+        // write messages to a file output
+        let mut file = File::create(output_path).unwrap();
+        for message in messages.iter() {
+            file.write_all(message.as_bytes()).unwrap();
+            file.write_all(b"\n").unwrap();
+        }
+        // compare the output with expected
+        file_check(expected_path, output_path);
     }
 
     #[test]
@@ -142,5 +165,15 @@ mod tests {
         let expect = "tests/output/diag10.ftl";
         let output_path = "/tmp/diag10.ftl";
         let _ = run_spec(&input, &expect, &output_path);
+    }
+
+    #[test]
+    fn test_gen() {
+        let mut visitor = SynVisitor::new();
+        let file_path = PathBuf::from("tests/input/errors.rs");
+        let _ = visitor.visit_syntax(&file_path);
+        let output = "/tmp/gen-errors.ftl";
+        visitor.gen_fluent_file(output);
+        file_check("tests/output/gen-errors.ftl", output);
     }
 }

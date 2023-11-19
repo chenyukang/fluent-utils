@@ -321,15 +321,15 @@ provide a type for the item
 `enum` and `struct` are mutually exclusive
 replace `enum struct` with
 expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved identifier `{$token}`
-#"expected `where`, `{"{"}`, `(`, or `;` after struct name"
+expected `where`, `{"{"}`, `(`, or `;` after struct name
 expected `where`, `{"{"}`, `(`, or `;` after struct name, found keyword `{$token}`
-#"expected `where`, `{"{"}`, `(`, or `;` after struct name"
+expected `where`, `{"{"}`, `(`, or `;` after struct name
 expected `where`, `{"{"}`, `(`, or `;` after struct name, found reserved keyword `{$token}`
-#"expected `where`, `{"{"}`, `(`, or `;` after struct name"
+expected `where`, `{"{"}`, `(`, or `;` after struct name
 expected `where`, `{"{"}`, `(`, or `;` after struct name, found doc comment `{$token}`
-#"expected `where`, `{"{"}`, `(`, or `;` after struct name"
+expected `where`, `{"{"}`, `(`, or `;` after struct name
 expected `where`, `{"{"}`, `(`, or `;` after struct name, found `{$token}`
-#"expected `where`, `{"{"}`, `(`, or `;` after struct name"
+expected `where`, `{"{"}`, `(`, or `;` after struct name
 unexpected keyword `Self` in generic parameters
 you cannot use `Self` as a generic parameter because it is reserved for associated items
 unexpected default lifetime parameter
@@ -394,7 +394,7 @@ invalid character in {$is_hex ->
 *[false] unicode
 } escape
 out of range hex escape
-#"must be a character in the range [\x00-\x7f]"
+must be a character in the range [\x00-\x7f]
 invalid start of unicode escape: `_`
 invalid start of unicode escape
 overlong unicode escape
@@ -430,7 +430,7 @@ this `{$chr}` is followed by the combining {$len ->
 } `{$escaped_marks}`
 there are non-printing characters, the full sequence is `{$escaped}`
 format of unicode escape sequences uses braces
-#"format of unicode escape sequences is `\u{...}`"
+format of unicode escape sequences is `\u{...}`
 remove the `|`
 wrap the pattern in parentheses
 unexpected `||` before function parameter

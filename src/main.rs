@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+mod fluent;
 mod visitor;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -48,10 +49,16 @@ impl FluentGenerator {
 
     pub fn generate(&self) {
         let mut visitor = visitor::SynVisitor::new();
-
+        let mut memssages = vec![];
         for file in self.visited_files.iter() {
-            let _ = visitor.visit_syntax(&file);
+            if let Ok(msgs) = visitor.visit_syntax(&file) {
+                memssages.extend(msgs);
+            } else {
+                eprintln!("visit_syntax failed: {:?}", file);
+            }
         }
+        eprintln!("memssages: {:?}", memssages.len());
+        fluent::gen_fluent_file(&memssages, "result.ftl");
     }
 }
 

@@ -23,6 +23,9 @@ impl SynVisitor {
 
 pub(crate) fn convert_lit_to_string(lit: &proc_macro2::Literal) -> String {
     let res = format!("{}", lit);
+    if res.starts_with("r#\"") && res.ends_with("\"#") && res.len() >= 5 {
+        return res[3..res.len() - 2].to_string();
+    }
     res[1..res.len() - 1].to_string()
 }
 
@@ -85,10 +88,6 @@ mod tests {
     }
 
     fn run_spec(input: &str, expected_path: &str, output_path: &str) {
-        eprintln!("input: {:?}", input);
-        eprintln!("expected: {:?}", expected_path);
-        eprintln!("output: {:?}", output_path);
-
         let mut visitor = SynVisitor::new();
         let file_path = PathBuf::from(input);
         let _ = visitor.visit_syntax(&file_path);
@@ -135,5 +134,13 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_raw_string() {
+        let input = "tests/input/diag10.rs";
+        let expect = "tests/output/diag10.ftl";
+        let output_path = "/tmp/diag10.ftl";
+        let _ = run_spec(&input, &expect, &output_path);
     }
 }

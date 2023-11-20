@@ -1,3 +1,4 @@
+use md5::{Digest, Md5};
 use proc_macro2::TokenTree;
 use std::fs::{self, File};
 use std::io::Write;
@@ -26,7 +27,9 @@ impl SynVisitor {
         let mut file = File::create(output_path).unwrap();
         for message in self.messages.iter() {
             // cacluate the a hash slug for the message
-            let digest = md5::compute(message);
+            let mut hasher = Md5::new();
+            hasher.update(message.to_string());
+            let digest = hasher.finalize();
             let id = format!("{:x}", digest);
             let slug = format!("slug-{}", id[0..8].to_string());
 
